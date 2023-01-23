@@ -13,86 +13,82 @@ from from_file import get_traits_from_file
 
 # nltk.download('punkt')
 
+
+def get_type(position):
+    if position == 0:
+        return 'Introversion', 'Extroversion'
+    elif position == 1:
+        return 'Intuition', 'Sensing'
+    elif position == 2:
+        return 'Thinking', 'Feeling'
+    else:
+        return 'Judging', 'Perceiving'
+
+
+def get_model(posts, traits, position, keys):
+    type1, type2 = get_type(position)
+    list_of_dictionaries = []
+
+    for dictionary in posts:
+        index = 0
+        new_dict = dict()
+        for word in dictionary:
+            if word > 0:
+                new_dict[keys[index]] = word
+            index = index + 1
+        list_of_dictionaries.append(new_dict)
+
+    features = []
+    for j in range(len(traits)):
+        if traits[j][position] == '0':
+            features.append((list_of_dictionaries[j], type1))
+        elif traits[j][position] == '1':
+            features.append((list_of_dictionaries[j], type2))
+    return features
+
+
+
 traits = ["INTJ", "INTP", "ENTJ", "ENTP", "INFJ", "INFP", "ENFJ", "ENFP", "ISTJ", "ISFJ", "ESTJ", "ESFJ", "ISTP",
           "ISFP", "ESTP", "ESFP"]
 
 list_posts, dict_vocabulary = get_posts_from_file()
 list_traits = get_traits_from_file()
-posts_train, posts_test, traits_train, traits_test = train_test_split(list_posts, list_traits, test_size=0.2,
-                                                                         random_state=0)
+posts_train, posts_test, traits_train, traits_test = train_test_split(list_posts, list_traits, test_size=0.2, random_state=0)
 
 keys = list(dict_vocabulary)
-list_of_dictionaries = []
-
-for dictionary in list_posts:
-    index = 0
-    new_dict = dict()
-    for word in dictionary:
-        if word > 0:
-            new_dict[keys[index]] = word
-        index = index + 1
-    list_of_dictionaries.append(new_dict)
 
 
-features = []
-for j in range(len(traits_train)):
-    if traits_train[j][0] == '0':
-        features.append((list_of_dictionaries[j], 'introvert'))
-    elif traits_train[j][0] == '1':
-        features.append((list_of_dictionaries[j], 'extrovert'))
+# =========== Introversion - Extroversion model ==========
+features = get_model(posts_train, traits_train, 0, keys)
+introversion_extroversion_model = NaiveBayesClassifier.train(features)
+print(nltk.classify.util.accuracy(introversion_extroversion_model, features)*100)
 
-# print(features)
-
-IntroExtro = NaiveBayesClassifier.train(features)
-
-print(nltk.classify.util.accuracy(IntroExtro, features)*100)
+features_test = get_model(posts_test, traits_test, 0, keys)
+print(nltk.classify.util.accuracy(introversion_extroversion_model, features_test)*100)
 
 
+# =========== Intuition - Sensing model ==========
+features = get_model(posts_train, traits_train, 1, keys)
+intuition_sensing_model = NaiveBayesClassifier.train(features)
+print(nltk.classify.util.accuracy(intuition_sensing_model, features)*100)
+
+features_test = get_model(posts_test, traits_test, 1, keys)
+print(nltk.classify.util.accuracy(intuition_sensing_model, features_test)*100)
 
 
+# =========== Thinking - Feeling model ==========
+features = get_model(posts_train, traits_train, 2, keys)
+thinking_feeling_model = NaiveBayesClassifier.train(features)
+print(nltk.classify.util.accuracy(thinking_feeling_model, features)*100)
 
-# useless_words = nltk.corpus.stopwords.words("english") + list(string.punctuation)
-# def build_bag_of_words_features_filtered(words):
-#     words = nltk.word_tokenize(words)
-#     return {
-#         word:1 for word in words \
-#         if not word in useless_words}
-#
-#
-#
-# data_set = pd.read_csv("mbti_1.csv")
-# all_posts= pd.DataFrame()
-# for j in traits:
-#     temp1 = data_set[data_set['type']==j]['posts']
-#     temp2 = []
-#     for i in temp1:
-#         temp2+=i.split('|||')
-#     temp3 = pd.Series(temp2)
-#     all_posts[j] = temp3
-#
-# # Features for the bag of words model
-# features=[]
-# for j in traits:
-#     temp1 = all_posts[j]
-#     temp1 = temp1.dropna() #not all the personality types have same number of files
-#     if('I' in j):
-#         features += [[(build_bag_of_words_features_filtered(i), 'introvert') \
-#         for i in temp1]]
-#     if('E' in j):
-#         features += [[(build_bag_of_words_features_filtered(i), 'extrovert') \
-#         for i in temp1]]
-#
-# split=[]
-# for i in range(16):
-#     split += [len(features[i]) * 0.8]
-# split = np.array(split,dtype = int)
-#
-# train=[]
-# for i in range(16):
-#     train += features[i][:split[i]]
-#
-# print(train)
+features_test = get_model(posts_test, traits_test, 2, keys)
+print(nltk.classify.util.accuracy(thinking_feeling_model, features_test)*100)
 
-# IntroExtro = NaiveBayesClassifier.train(train)
 
-# print(nltk.classify.util.accuracy(IntroExtro, train)*100)
+# =========== Judging - Perceiving model ==========
+features = get_model(posts_train, traits_train, 3, keys)
+judging_perceiving_model = NaiveBayesClassifier.train(features)
+print(nltk.classify.util.accuracy(judging_perceiving_model, features)*100)
+
+features_test = get_model(posts_test, traits_test, 3, keys)
+print(nltk.classify.util.accuracy(judging_perceiving_model, features_test)*100)
