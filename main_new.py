@@ -1,11 +1,16 @@
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import GridSearchCV, StratifiedKFold
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from xgboost import XGBClassifier
+
 from from_file import get_posts_from_file
 from from_file import get_traits_from_file
 from sklearn.feature_extraction import DictVectorizer
 import numpy as np
+
 # nltk.download('punkt')
 
 
@@ -89,8 +94,10 @@ def grid_search_for_model(grid_parameters,model_name,position):
             print("Thinking Feeling Logistic Regression Model Test accuracy percent:",
                   gs_log_reg.score(X_test, y_test) * 100)
         elif position==3:
-            print("Judging Perceiving Logistic Regression Model Train accuracy percent:",gs_log_reg.score(X_train, y_train) * 100)
-            print("Judging Perceiving Logistic Regression Model Test accuracy percent:", gs_log_reg.score(X_test, y_test) * 100)
+            print("Judging Perceiving Logistic Regression Model Train accuracy percent:",
+                  gs_log_reg.score(X_train, y_train) * 100)
+            print("Judging Perceiving Logistic Regression Model Test accuracy percent:",
+                  gs_log_reg.score(X_test, y_test) * 100)
     elif model_name=="Random Forest":
         features = get_model(posts_train, traits_train, position, keys)
         features_test = get_model(posts_test, traits_test, position, keys)
@@ -117,8 +124,73 @@ def grid_search_for_model(grid_parameters,model_name,position):
             print("Thinking Feeling Random Forest Model Test accuracy percent:",
                   gs_rf.score(X_test, y_test) * 100)
         elif position==3:
-            print("Judging Perceiving Random Forest Model Train accuracy percent:",gs_rf.score(X_train, y_train) * 100)
-            print("Judging Perceiving Random Forest Model Test accuracy percent:", gs_rf.score(X_test, y_test) * 100)
+            print("Judging Perceiving Random Forest Model Train accuracy percent:",
+                  gs_rf.score(X_train, y_train) * 100)
+            print("Judging Perceiving Random Forest Model Test accuracy percent:",
+                  gs_rf.score(X_test, y_test) * 100)
+    elif model_name=="SVM":
+        features = get_model(posts_train, traits_train, position, keys)
+        features_test = get_model(posts_test, traits_test, position, keys)
+        X_train, y_train, X_test, y_test = obtain_data(features, features_test)
+        gs_svm = GridSearchCV(estimator=SVC(),
+                             param_grid=grid_parameters,
+                             refit=True,
+                             verbose=2)
+        gs_svm.fit(X_train, y_train)
+        print(gs_svm.best_params_)
+        if position == 0:
+            print("Introversion Extroversion SVM Model Train accuracy percent:",
+                  gs_svm.score(X_train, y_train) * 100)
+            print("Introversion Extroversion SVM Model Test accuracy percent:",
+                  gs_svm.score(X_test, y_test) * 100)
+        elif position == 1:
+            print("Intuition Sensing SVM Model Train accuracy percent:",
+                  gs_svm.score(X_train, y_train) * 100)
+            print("Intuition Sensing SVM Model Test accuracy percent:",
+                  gs_svm.score(X_test, y_test) * 100)
+        if position == 2:
+            print("Thinking Feeling SVM Model Train accuracy percent:",
+                  gs_svm.score(X_train, y_train) * 100)
+            print("Thinking Feeling SVM Model Test accuracy percent:",
+                  gs_svm.score(X_test, y_test) * 100)
+        elif position == 3:
+            print("Judging Perceiving SVM Model Train accuracy percent:",
+                  gs_svm.score(X_train, y_train) * 100)
+            print("Judging Perceiving SVM Model Test accuracy percent:",
+                  gs_svm.score(X_test, y_test) * 100)
+    elif model_name=="Decision Tree":
+        features = get_model(posts_train, traits_train, position, keys)
+        features_test = get_model(posts_test, traits_test, position, keys)
+        X_train, y_train, X_test, y_test = obtain_data(features, features_test)
+        gs_dt = GridSearchCV(estimator=DecisionTreeClassifier(),
+                             param_grid=grid_parameters,
+                              cv=10,
+                              n_jobs=1,
+                              verbose=2)
+        gs_dt.fit(X_train, y_train)
+        print(gs_dt.best_params_)
+        if position == 0:
+            print("Introversion Extroversion Decision Tree Model Train accuracy percent:",
+                  gs_dt.score(X_train, y_train) * 100)
+            print("Introversion Extroversion Decision Tree Model Test accuracy percent:",
+                  gs_dt.score(X_test, y_test) * 100)
+        elif position == 1:
+            print("Intuition Sensing Decision Tree Model Train accuracy percent:",
+                  gs_dt.score(X_train, y_train) * 100)
+            print("Intuition Sensing Decision Tree Model Test accuracy percent:",
+                  gs_dt.score(X_test, y_test) * 100)
+        if position == 2:
+            print("Thinking Feeling Decision Tree Model Train accuracy percent:",
+                  gs_dt.score(X_train, y_train) * 100)
+            print("Thinking Feeling Decision Tree Model Test accuracy percent:",
+                  gs_dt.score(X_test, y_test) * 100)
+        elif position == 3:
+            print("Judging Perceiving Decision Tree Model Train accuracy percent:",
+                  gs_dt.score(X_train, y_train) * 100)
+            print("Judging Perceiving Decision Tree Model Test accuracy percent:",
+                  gs_dt.score(X_test, y_test) * 100)
+
+
 
 # # =========== Naive Bayes Classifier ===========
 #
@@ -166,17 +238,33 @@ print("======================================================================")
 
 log_reg_grid = {"C": np.logspace(-4, 4, 30),
                     "solver": ["liblinear"]}
-grid_search_for_model(log_reg_grid,"Logistic Regression",0)
-grid_search_for_model(log_reg_grid,"Logistic Regression",1)
-grid_search_for_model(log_reg_grid,"Logistic Regression",2)
-grid_search_for_model(log_reg_grid,"Logistic Regression",3)
+grid_search_for_model(log_reg_grid, "Logistic Regression", 0)
+grid_search_for_model(log_reg_grid, "Logistic Regression", 1)
+grid_search_for_model(log_reg_grid, "Logistic Regression", 2)
+grid_search_for_model(log_reg_grid, "Logistic Regression", 3)
 rf_grid = {#"n_estimators": np.arange(100, 1000, 100),
            "max_depth": [None, 3, 5, 10],
            "min_samples_split": np.arange(2, 20, 3),
            #"min_samples_leaf": np.arange(1, 20, 3)
            }
-grid_search_for_model(rf_grid,"Random Forest",0)
-grid_search_for_model(rf_grid,"Random Forest",1)
-grid_search_for_model(rf_grid,"Random Forest",2)
-grid_search_for_model(rf_grid,"Random Forest",3)
-
+grid_search_for_model(rf_grid, "Random Forest", 0)
+grid_search_for_model(rf_grid, "Random Forest", 1)
+grid_search_for_model(rf_grid, "Random Forest", 2)
+grid_search_for_model(rf_grid, "Random Forest", 3)
+svm_grid = {'C': [0.1, 1, 10, 100],
+            #'gamma': [1, 0.1, 0.01, 0.001],
+            #'kernel': ['rbf', 'poly', 'sigmoid']
+            }
+grid_search_for_model(svm_grid, "SVM", 0)
+grid_search_for_model(svm_grid, "SVM", 1)
+grid_search_for_model(svm_grid, "SVM", 2)
+grid_search_for_model(svm_grid, "SVM", 3)
+dt_grid =  {
+    'min_samples_leaf': [1, 2, 3],
+    'max_depth': [1, 2, 3],
+    'criterion': ['gini', 'entropy']
+}
+grid_search_for_model(dt_grid, "Decision Tree", 0)
+grid_search_for_model(dt_grid, "Decision Tree", 1)
+grid_search_for_model(dt_grid, "Decision Tree", 2)
+grid_search_for_model(dt_grid, "Decision Tree", 3)
