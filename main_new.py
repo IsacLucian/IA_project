@@ -5,6 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
+import pickle
 
 from from_file import get_posts_from_file
 from from_file import get_traits_from_file
@@ -63,7 +64,6 @@ list_posts, dict_vocabulary = get_posts_from_file()
 list_traits = get_traits_from_file()
 posts_train, posts_test, traits_train, traits_test = train_test_split(list_posts, list_traits, test_size=0.2,
                                                                       random_state=0)
-
 keys = list(dict_vocabulary)
 
 
@@ -79,21 +79,33 @@ def grid_search_for_model(grid_parameters,model_name,position):
         gs_log_reg.fit(X_train, y_train)
         print(gs_log_reg.best_params_)
         if position==0:
+            # save_classifier = open("logistic_regression0.pickle", "wb")
+            # pickle.dump(gs_log_reg, save_classifier)
+            # save_classifier.close()
             print("Introversion Extroversion Logistic Regression Model Train accuracy percent:",
                   gs_log_reg.score(X_train, y_train) * 100)
             print("Introversion Extroversion Logistic Regression Model Test accuracy percent:",
                   gs_log_reg.score(X_test, y_test) * 100)
         elif position==1:
+            # save_classifier = open("logistic_regression1.pickle", "wb")
+            # pickle.dump(gs_log_reg, save_classifier)
+            # save_classifier.close()
             print("Intuition Sensing Logistic Regression Model Train accuracy percent:",
                   gs_log_reg.score(X_train, y_train) * 100)
             print("Intuition Sensing Logistic Regression Model Test accuracy percent:",
                   gs_log_reg.score(X_test, y_test) * 100)
         if position==2:
+            # save_classifier = open("logistic_regression2.pickle", "wb")
+            # pickle.dump(gs_log_reg, save_classifier)
+            # save_classifier.close()
             print("Thinking Feeling Logistic Regression Model Train accuracy percent:",
                   gs_log_reg.score(X_train, y_train) * 100)
             print("Thinking Feeling Logistic Regression Model Test accuracy percent:",
                   gs_log_reg.score(X_test, y_test) * 100)
         elif position==3:
+            # save_classifier = open("logistic_regression3.pickle", "wb")
+            # pickle.dump(gs_log_reg, save_classifier)
+            # save_classifier.close()
             print("Judging Perceiving Logistic Regression Model Train accuracy percent:",
                   gs_log_reg.score(X_train, y_train) * 100)
             print("Judging Perceiving Logistic Regression Model Test accuracy percent:",
@@ -109,21 +121,33 @@ def grid_search_for_model(grid_parameters,model_name,position):
         gs_rf.fit(X_train, y_train)
         print(gs_rf.best_params_)
         if position==0:
+            # save_classifier = open("random_forest0.pickle", "wb")
+            # pickle.dump(gs_rf, save_classifier)
+            # save_classifier.close()
             print("Introversion Extroversion Random Forest Model Train accuracy percent:",
                   gs_rf.score(X_train, y_train) * 100)
             print("Introversion Extroversion Random Forest Model Test accuracy percent:",
                   gs_rf.score(X_test, y_test) * 100)
         elif position==1:
+            # save_classifier = open("random_forest1.pickle", "wb")
+            # pickle.dump(gs_rf, save_classifier)
+            # save_classifier.close()
             print("Intuition Sensing Random Forest Model Train accuracy percent:",
                   gs_rf.score(X_train, y_train) * 100)
             print("Intuition Sensing Random Forest Model Test accuracy percent:",
                   gs_rf.score(X_test, y_test) * 100)
         if position==2:
+            # save_classifier = open("random_forest2.pickle", "wb")
+            # pickle.dump(gs_rf, save_classifier)
+            # save_classifier.close()
             print("Thinking Feeling Random Forest Model Train accuracy percent:",
                   gs_rf.score(X_train, y_train) * 100)
             print("Thinking Feeling Random Forest Model Test accuracy percent:",
                   gs_rf.score(X_test, y_test) * 100)
         elif position==3:
+            # save_classifier = open("random_forest3.pickle", "wb")
+            # pickle.dump(gs_rf, save_classifier)
+            # save_classifier.close()
             print("Judging Perceiving Random Forest Model Train accuracy percent:",
                   gs_rf.score(X_train, y_train) * 100)
             print("Judging Perceiving Random Forest Model Test accuracy percent:",
@@ -139,21 +163,33 @@ def grid_search_for_model(grid_parameters,model_name,position):
         gs_svm.fit(X_train, y_train)
         print(gs_svm.best_params_)
         if position == 0:
+            # save_classifier = open("svm0.pickle", "wb")
+            # pickle.dump(gs_svm, save_classifier)
+            # save_classifier.close()
             print("Introversion Extroversion SVM Model Train accuracy percent:",
                   gs_svm.score(X_train, y_train) * 100)
             print("Introversion Extroversion SVM Model Test accuracy percent:",
                   gs_svm.score(X_test, y_test) * 100)
         elif position == 1:
+            # save_classifier = open("svm1.pickle", "wb")
+            # pickle.dump(gs_svm, save_classifier)
+            # save_classifier.close()
             print("Intuition Sensing SVM Model Train accuracy percent:",
                   gs_svm.score(X_train, y_train) * 100)
             print("Intuition Sensing SVM Model Test accuracy percent:",
                   gs_svm.score(X_test, y_test) * 100)
         if position == 2:
+            # save_classifier = open("svm2.pickle", "wb")
+            # pickle.dump(gs_svm, save_classifier)
+            # save_classifier.close()
             print("Thinking Feeling SVM Model Train accuracy percent:",
                   gs_svm.score(X_train, y_train) * 100)
             print("Thinking Feeling SVM Model Test accuracy percent:",
                   gs_svm.score(X_test, y_test) * 100)
         elif position == 3:
+            # save_classifier = open("svm3.pickle", "wb")
+            # pickle.dump(gs_svm, save_classifier)
+            # save_classifier.close()
             print("Judging Perceiving SVM Model Train accuracy percent:",
                   gs_svm.score(X_train, y_train) * 100)
             print("Judging Perceiving SVM Model Test accuracy percent:",
@@ -170,21 +206,33 @@ def grid_search_for_model(grid_parameters,model_name,position):
         gs_dt.fit(X_train, y_train)
         print(gs_dt.best_params_)
         if position == 0:
+            # save_classifier = open("decision_tree0.pickle", "wb")
+            # pickle.dump(gs_dt, save_classifier)
+            # save_classifier.close()
             print("Introversion Extroversion Decision Tree Model Train accuracy percent:",
                   gs_dt.score(X_train, y_train) * 100)
             print("Introversion Extroversion Decision Tree Model Test accuracy percent:",
                   gs_dt.score(X_test, y_test) * 100)
         elif position == 1:
+            # save_classifier = open("decision_tree1.pickle", "wb")
+            # pickle.dump(gs_dt, save_classifier)
+            # save_classifier.close()
             print("Intuition Sensing Decision Tree Model Train accuracy percent:",
                   gs_dt.score(X_train, y_train) * 100)
             print("Intuition Sensing Decision Tree Model Test accuracy percent:",
                   gs_dt.score(X_test, y_test) * 100)
         if position == 2:
+            # save_classifier = open("decision_tree2.pickle", "wb")
+            # pickle.dump(gs_dt, save_classifier)
+            # save_classifier.close()
             print("Thinking Feeling Decision Tree Model Train accuracy percent:",
                   gs_dt.score(X_train, y_train) * 100)
             print("Thinking Feeling Decision Tree Model Test accuracy percent:",
                   gs_dt.score(X_test, y_test) * 100)
         elif position == 3:
+            # save_classifier = open("decision_tree3.pickle", "wb")
+            # pickle.dump(gs_dt, save_classifier)
+            # save_classifier.close()
             print("Judging Perceiving Decision Tree Model Train accuracy percent:",
                   gs_dt.score(X_train, y_train) * 100)
             print("Judging Perceiving Decision Tree Model Test accuracy percent:",
