@@ -1,7 +1,11 @@
+import nltk
+from nltk import NaiveBayesClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, VotingClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
@@ -237,82 +241,210 @@ def grid_search_for_model(grid_parameters,model_name,position):
                   gs_dt.score(X_train, y_train) * 100)
             print("Judging Perceiving Decision Tree Model Test accuracy percent:",
                   gs_dt.score(X_test, y_test) * 100)
+    elif model_name == "KNN":
+        features = get_model(posts_train, traits_train, position, keys)
+        features_test = get_model(posts_test, traits_test, position, keys)
+        X_train, y_train, X_test, y_test = obtain_data(features, features_test)
+        gs_knn = GridSearchCV(estimator=KNeighborsClassifier(),
+                             param_grid=grid_parameters,
+                             cv=10,
+                             n_jobs=1,
+                             verbose=2)
+        gs_knn.fit(X_train, y_train)
+        print(gs_knn.best_params_)
+        if position == 0:
+            save_classifier = open("knn0.pickle", "wb")
+            pickle.dump(gs_knn, save_classifier)
+            save_classifier.close()
+            print("Introversion Extroversion KNN Model Train accuracy percent:",
+                  gs_knn.score(X_train, y_train) * 100)
+            print("Introversion Extroversion KNN Model Test accuracy percent:",
+                  gs_knn.score(X_test, y_test) * 100)
+        elif position == 1:
+            save_classifier = open("knn1.pickle", "wb")
+            pickle.dump(gs_knn, save_classifier)
+            save_classifier.close()
+            print("Intuition Sensing KNN Model Train accuracy percent:",
+                  gs_knn.score(X_train, y_train) * 100)
+            print("Intuition Sensing KNN Model Test accuracy percent:",
+                  gs_knn.score(X_test, y_test) * 100)
+        if position == 2:
+            save_classifier = open("knn2.pickle", "wb")
+            pickle.dump(gs_knn, save_classifier)
+            save_classifier.close()
+            print("Thinking Feeling KNN Model Train accuracy percent:",
+                  gs_knn.score(X_train, y_train) * 100)
+            print("Thinking Feeling KNN Model Test accuracy percent:",
+                  gs_knn.score(X_test, y_test) * 100)
+        elif position == 3:
+            save_classifier = open("knn3.pickle", "wb")
+            pickle.dump(gs_knn, save_classifier)
+            save_classifier.close()
+            print("Judging Perceiving KNN Model Train accuracy percent:",
+                  gs_knn.score(X_train, y_train) * 100)
+            print("Judging Perceiving KNN Model Test accuracy percent:",
+                  gs_knn.score(X_test, y_test) * 100)
+    elif model_name == "Naive Bayes":
+        features = get_model(posts_train, traits_train, position, keys)
+        features_test = get_model(posts_test, traits_test, position, keys)
+        gs_nb = NaiveBayesClassifier.train(features)
+        if position == 0:
+            save_classifier = open("nb0.pickle", "wb")
+            pickle.dump(gs_nb, save_classifier)
+            save_classifier.close()
+            print("Introversion Extroversion Naive Bayes Model Train accuracy percent:",
+                  nltk.classify.util.accuracy(gs_nb, features) * 100)
+            print("Introversion Extroversion Naive Bayes Model Test accuracy percent:",
+                  nltk.classify.util.accuracy(gs_nb, features_test) * 100)
+        elif position == 1:
+            save_classifier = open("nb1.pickle", "wb")
+            pickle.dump(gs_nb, save_classifier)
+            save_classifier.close()
+            print("Introversion Extroversion Naive Bayes Model Train accuracy percent:",
+                  nltk.classify.util.accuracy(gs_nb, features) * 100)
+            print("Introversion Extroversion Naive Bayes Model Test accuracy percent:",
+                  nltk.classify.util.accuracy(gs_nb, features_test) * 100)
+        if position == 2:
+            save_classifier = open("nb2.pickle", "wb")
+            pickle.dump(gs_nb, save_classifier)
+            save_classifier.close()
+            print("Introversion Extroversion Naive Bayes Model Train accuracy percent:",
+                  nltk.classify.util.accuracy(gs_nb, features) * 100)
+            print("Introversion Extroversion Naive Bayes Model Test accuracy percent:",
+                  nltk.classify.util.accuracy(gs_nb, features_test) * 100)
+        elif position == 3:
+            save_classifier = open("nb3.pickle", "wb")
+            pickle.dump(gs_nb, save_classifier)
+            save_classifier.close()
+            print("Introversion Extroversion Naive Bayes Model Train accuracy percent:",
+                  nltk.classify.util.accuracy(gs_nb, features) * 100)
+            print("Introversion Extroversion Naive Bayes Model Test accuracy percent:",
+                  nltk.classify.util.accuracy(gs_nb, features_test) * 100)
+    elif model_name == "Ensemble":
+        features = get_model(posts_train, traits_train, position, keys)
+        features_test = get_model(posts_test, traits_test, position, keys)
+        X_train, y_train, X_test, y_test = obtain_data(features, features_test)
 
+        if position == 0:
+            classifier_f = open("knn0.pickle", "rb")
+            knn0 = pickle.load(classifier_f)
+            classifier_f = open("random_forest0.pickle", "rb")
+            random_forest0 = pickle.load(classifier_f)
+            est_Ensemble = VotingClassifier(estimators=[('KNN', knn0), ('RF', random_forest0)],
+                                            voting='soft',
+                                            weights=[1, 1])
+            est_Ensemble.fit(X_train, y_train)
+            save_classifier = open("ensemble0.pickle", "wb")
+            pickle.dump(est_Ensemble, save_classifier)
+            save_classifier.close()
+            print("Introversion Extroversion Ensemble Model Train accuracy percent:",
+                  est_Ensemble.score * 100)
+            print("Introversion Extroversion Ensemble Model Test accuracy percent:",
+                  est_Ensemble.score * 100)
+        elif position == 1:
+            classifier_f = open("knn1.pickle", "rb")
+            knn0 = pickle.load(classifier_f)
+            classifier_f = open("random_forest1.pickle", "rb")
+            random_forest0 = pickle.load(classifier_f)
+            est_Ensemble = VotingClassifier(estimators=[('KNN', knn0), ('RF', random_forest0)],
+                                            voting='soft',
+                                            weights=[1, 1])
+            est_Ensemble.fit(X_train, y_train)
+            save_classifier = open("ensemble1.pickle", "wb")
+            pickle.dump(est_Ensemble, save_classifier)
+            save_classifier.close()
+            print("Introversion Extroversion Ensemble Model Train accuracy percent:",
+                  est_Ensemble.score * 100)
+            print("Introversion Extroversion Ensemble Model Test accuracy percent:",
+                  est_Ensemble.score * 100)
+        elif position == 2:
+            classifier_f = open("knn2.pickle", "rb")
+            knn0 = pickle.load(classifier_f)
+            classifier_f = open("random_forest2.pickle", "rb")
+            random_forest0 = pickle.load(classifier_f)
+            est_Ensemble = VotingClassifier(estimators=[('KNN', knn0), ('RF', random_forest0)],
+                                            voting='soft',
+                                            weights=[1, 1])
+            est_Ensemble.fit(X_train, y_train)
+            save_classifier = open("ensemble2.pickle", "wb")
+            pickle.dump(est_Ensemble, save_classifier)
+            save_classifier.close()
+            print("Introversion Extroversion Ensemble Model Train accuracy percent:",
+                  est_Ensemble.score * 100)
+            print("Introversion Extroversion Ensemble Model Test accuracy percent:",
+                  est_Ensemble.score * 100)
+        elif position == 3:
+            classifier_f = open("knn3.pickle", "rb")
+            knn0 = pickle.load(classifier_f)
+            classifier_f = open("random_forest3.pickle", "rb")
+            random_forest0 = pickle.load(classifier_f)
+            est_Ensemble = VotingClassifier(estimators=[('KNN', knn0), ('RF', random_forest0)],
+                                            voting='soft',
+                                            weights=[1, 1])
+            est_Ensemble.fit(X_train, y_train)
+            save_classifier = open("ensemble3.pickle", "wb")
+            pickle.dump(est_Ensemble, save_classifier)
+            save_classifier.close()
+            print("Introversion Extroversion Ensemble Model Train accuracy percent:",
+                  est_Ensemble.score * 100)
+            print("Introversion Extroversion Ensemble Model Test accuracy percent:",
+                  est_Ensemble.score * 100)
 
-
-# # =========== Naive Bayes Classifier ===========
-#
-# # =========== Introversion - Extroversion model ==========
-# features = get_model(posts_train, traits_train, 0, keys)
-# introversion_extroversion_naive_bayes_model = NaiveBayesClassifier.train(features)
-# print("Introversion Extroversion Naive Bayes Model Train accuracy percent:",
-#       nltk.classify.util.accuracy(introversion_extroversion_naive_bayes_model, features) * 100)
-#
-# features_test = get_model(posts_test, traits_test, 0, keys)
-# print("Introversion Extroversion Naive Bayes Model Test accuracy percent:",
-#       nltk.classify.util.accuracy(introversion_extroversion_naive_bayes_model, features_test) * 100)
-#
-# # =========== Intuition - Sensing model ==========
-# features = get_model(posts_train, traits_train, 1, keys)
-# intuition_sensing_naive_bayes_model = NaiveBayesClassifier.train(features)
-# print("Intuition Sensing Naive Bayes Model Train accuracy percent:",
-#       nltk.classify.util.accuracy(intuition_sensing_naive_bayes_model, features) * 100)
-#
-# features_test = get_model(posts_test, traits_test, 1, keys)
-# print("Intuition Sensing Naive Bayes Model Test accuracy percent:",
-#       nltk.classify.util.accuracy(intuition_sensing_naive_bayes_model, features_test) * 100)
-#
-# # =========== Thinking - Feeling model ==========
-# features = get_model(posts_train, traits_train, 2, keys)
-# thinking_feeling_naive_bayes_model = NaiveBayesClassifier.train(features)
-# print("Thinking Feeling Naive Bayes Model Train accuracy percent:",
-#       nltk.classify.util.accuracy(thinking_feeling_naive_bayes_model, features) * 100)
-#
-# features_test = get_model(posts_test, traits_test, 2, keys)
-# print("Thinking Feeling Naive Bayes Model Test accuracy percent:",
-#       nltk.classify.util.accuracy(thinking_feeling_naive_bayes_model, features_test) * 100)
-#
-# # =========== Judging - Perceiving model ==========
-# features = get_model(posts_train, traits_train, 3, keys)
-# judging_perceiving_naive_bayes_model = NaiveBayesClassifier.train(features)
-# print("Judging Perceiving Naive Bayes Model Train accuracy percent:",
-#       nltk.classify.util.accuracy(judging_perceiving_naive_bayes_model, features) * 100)
-#
-# features_test = get_model(posts_test, traits_test, 3, keys)
-# print("Judging Perceiving Naive Bayes Model Test accuracy percent:",
-#       nltk.classify.util.accuracy(judging_perceiving_naive_bayes_model, features_test) * 100)
 
 print("======================================================================")
 
-log_reg_grid = {"C": np.logspace(-4, 4, 30),
-                    "solver": ["liblinear"]}
-grid_search_for_model(log_reg_grid, "Logistic Regression", 0)
-grid_search_for_model(log_reg_grid, "Logistic Regression", 1)
-grid_search_for_model(log_reg_grid, "Logistic Regression", 2)
-grid_search_for_model(log_reg_grid, "Logistic Regression", 3)
-rf_grid = {#"n_estimators": np.arange(100, 1000, 100),
-           "max_depth": [None, 3, 5, 10],
-           "min_samples_split": np.arange(2, 20, 3),
-           #"min_samples_leaf": np.arange(1, 20, 3)
-           }
-grid_search_for_model(rf_grid, "Random Forest", 0)
-grid_search_for_model(rf_grid, "Random Forest", 1)
-grid_search_for_model(rf_grid, "Random Forest", 2)
-grid_search_for_model(rf_grid, "Random Forest", 3)
-svm_grid = {'C': [0.1, 1, 10, 100],
-            #'gamma': [1, 0.1, 0.01, 0.001],
-            #'kernel': ['rbf', 'poly', 'sigmoid']
-            }
-grid_search_for_model(svm_grid, "SVM", 0)
-grid_search_for_model(svm_grid, "SVM", 1)
-grid_search_for_model(svm_grid, "SVM", 2)
-grid_search_for_model(svm_grid, "SVM", 3)
-dt_grid =  {
-    'min_samples_leaf': [1, 2, 3],
-    'max_depth': [1, 2, 3],
-    'criterion': ['gini', 'entropy']
+# log_reg_grid = {"C": np.logspace(-4, 4, 30),
+#                     "solver": ["liblinear"]}
+# grid_search_for_model(log_reg_grid, "Logistic Regression", 0)
+# grid_search_for_model(log_reg_grid, "Logistic Regression", 1)
+# grid_search_for_model(log_reg_grid, "Logistic Regression", 2)
+# grid_search_for_model(log_reg_grid, "Logistic Regression", 3)
+# rf_grid = {#"n_estimators": np.arange(100, 1000, 100),
+#            "max_depth": [None, 3, 5, 10],
+#            "min_samples_split": np.arange(2, 20, 3),
+#            #"min_samples_leaf": np.arange(1, 20, 3)
+#            }
+# grid_search_for_model(rf_grid, "Random Forest", 0)
+# grid_search_for_model(rf_grid, "Random Forest", 1)
+# grid_search_for_model(rf_grid, "Random Forest", 2)
+# grid_search_for_model(rf_grid, "Random Forest", 3)
+# svm_grid = {'C': [0.1, 1, 10, 100],
+#             #'gamma': [1, 0.1, 0.01, 0.001],
+#             #'kernel': ['rbf', 'poly', 'sigmoid']
+#             }
+# grid_search_for_model(svm_grid, "SVM", 0)
+# grid_search_for_model(svm_grid, "SVM", 1)
+# grid_search_for_model(svm_grid, "SVM", 2)
+# grid_search_for_model(svm_grid, "SVM", 3)
+# dt_grid =  {
+#     'min_samples_leaf': [1, 2, 3],
+#     'max_depth': [1, 2, 3],
+#     'criterion': ['gini', 'entropy']
+# }
+# grid_search_for_model(dt_grid, "Decision Tree", 0)
+# grid_search_for_model(dt_grid, "Decision Tree", 1)
+# grid_search_for_model(dt_grid, "Decision Tree", 2)
+# grid_search_for_model(dt_grid, "Decision Tree", 3)
+
+# knn_grid = {
+#     'n_neighbors' : [2, 4],
+#     'leaf_size' : [10, 20],
+#     'p' : [1,2]
+# }
+# grid_search_for_model(knn_grid, "KNN", 0)
+# grid_search_for_model(knn_grid, "KNN", 1)
+# grid_search_for_model(knn_grid, "KNN", 2)
+# grid_search_for_model(knn_grid, "KNN", 3)
+
+knn_grid = {
 }
-grid_search_for_model(dt_grid, "Decision Tree", 0)
-grid_search_for_model(dt_grid, "Decision Tree", 1)
-grid_search_for_model(dt_grid, "Decision Tree", 2)
-grid_search_for_model(dt_grid, "Decision Tree", 3)
+# grid_search_for_model(knn_grid, "Naive Bayes", 0)
+# grid_search_for_model(knn_grid, "Naive Bayes", 1)
+# grid_search_for_model(knn_grid, "Naive Bayes", 2)
+# grid_search_for_model(knn_grid, "Naive Bayes", 3)
+
+grid_search_for_model(knn_grid, "Ensemble", 0)
+grid_search_for_model(knn_grid, "Ensemble", 1)
+grid_search_for_model(knn_grid, "Ensemble", 2)
+grid_search_for_model(knn_grid, "Ensemble", 3)
+

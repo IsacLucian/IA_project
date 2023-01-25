@@ -3,6 +3,7 @@ from nltk.corpus import stopwords
 from sklearn.feature_extraction import DictVectorizer
 import regex as re
 from from_file import get_posts_from_file
+from sklearn.ensemble import VotingClassifier, AdaBoostClassifier, RandomForestClassifier
 
 useless_words = stopwords.words('english')
 
@@ -128,6 +129,29 @@ def grid_search_for_model(model_name, data):
         personality += gs_dt.predict(data)[0][0]
         classifier_f.close()
         return personality
+    elif model_name=="KNN":
+        classifier_f = open("knn0.pickle", "rb")
+        gs_dt = pickle.load(classifier_f)
+        personality += gs_dt.predict(data)[0][0]
+        classifier_f.close()
+        classifier_f = open("knn1.pickle", "rb")
+        gs_dt = pickle.load(classifier_f)
+        if gs_dt.predict(data)[0]=='Intuition':
+            personality += 'N'
+        else:
+            personality += gs_dt.predict(data)[0][0]
+        classifier_f.close()
+        classifier_f = open("knn2.pickle", "rb")
+        gs_dt = pickle.load(classifier_f)
+        personality += gs_dt.predict(data)[0][0]
+        classifier_f.close()
+        classifier_f = open("knn3.pickle", "rb")
+        gs_dt = pickle.load(classifier_f)
+        personality += gs_dt.predict(data)[0][0]
+        classifier_f.close()
+        return personality
+
+
 
 text = "story working felt upon sense hold older physical huge friendship go house wek"
 print(grid_search_for_model("Logistic Regression", modify_data(text)))
