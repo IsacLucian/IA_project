@@ -2,7 +2,7 @@ import customtkinter
 import os
 from PIL import Image
 from tkinter import filedialog as fd
-from backend import svm, decision_tree, random_forest, logistic_regression, naive_bayes, knn
+from backend import svm, decision_tree, random_forest, logistic_regression, naive_bayes, knn, ensemble
 
 
 class App(customtkinter.CTk):
@@ -141,9 +141,9 @@ class App(customtkinter.CTk):
                                                              text="Choose model: ")
         self.text_frame_model_label.grid(row=3, column=0, padx=20, pady=0, sticky="w")
         self.text_frame_model_menu = customtkinter.CTkOptionMenu(self.text_frame,
-                                                                 values=["SVM", "Decision Tree", "Random Forest", "Logistic "
-                                                                                                         "Regression",
-                                                                         "Naive Bayes", "KNN"])
+                                                                 values=["SVM", "Decision Tree", "Random Forest",
+                                                                         "Logistic ", "Regression", "Naive Bayes",
+                                                                         "KNN", "Ensemble"])
         self.text_frame_model_menu.grid(row=4, column=0, padx=20, pady=0, sticky="w")
 
         self.text_frame_submit_button = customtkinter.CTkButton(self.text_frame,
@@ -186,9 +186,10 @@ class App(customtkinter.CTk):
         self.upload_frame_model_label.grid(row=4, column=0, padx=20, pady=0, sticky="w")
 
         self.upload_frame_model_menu = customtkinter.CTkOptionMenu(self.upload_frame,
-                                                                   values=["SVM", "Decision Tree", "Random Forest", "Logistic "
-                                                                                                           "Regression",
-                                                                           "Naive Bayes", "KNN"])
+                                                                   values=["SVM", "Decision Tree", "Random Forest",
+                                                                           "Logistic "
+                                                                           "Regression",
+                                                                           "Naive Bayes", "KNN", "Ensemble"])
         self.upload_frame_model_menu.grid(row=5, column=0, padx=20, pady=0, sticky="w")
 
         self.upload_frame_submit_button = customtkinter.CTkButton(self.upload_frame,
@@ -260,8 +261,9 @@ class App(customtkinter.CTk):
         self.text_frame_text_box.delete('1.0', 'end')
 
         response = self.call_corresponding_be_function(model, text)
+        full_response = self.format_response(response)
 
-        self.text_frame_text_box.insert("insert", response)
+        self.text_frame_text_box.insert("insert", full_response)
         self.text_frame_text_box.configure(state="disabled")
 
     def submit_upload_event(self):
@@ -275,8 +277,9 @@ class App(customtkinter.CTk):
         self.upload_frame_text_box.delete('1.0', 'end')
 
         response = self.call_corresponding_be_function(model, text)
+        full_response = self.format_response(response)
 
-        self.upload_frame_text_box.insert("insert", response)
+        self.upload_frame_text_box.insert("insert", full_response)
         self.upload_frame_text_box.configure(state="disabled")
 
     def call_corresponding_be_function(self, model, text):
@@ -292,6 +295,47 @@ class App(customtkinter.CTk):
             return naive_bayes(text)
         elif model == "KNN":
             return knn(text)
+        elif model == "Ensemble":
+            return ensemble(text)
+
+    def format_response(self, response):
+        full_response = "Based on your text, the personality trait that fits you best is " \
+                        + response + " (" + self.get_response_synonym(response) + ")."
+        return full_response
+
+    def get_response_synonym(self, response):
+        if response == "INTJ":
+            return "Architect"
+        elif response == "INTF":
+            return "Logician"
+        elif response == "ENTJ":
+            return "Commander"
+        elif response == "ENTP":
+            return "Debater"
+        elif response == "INFJ":
+            return "Advocate"
+        elif response == "INFP":
+            return "Mediator"
+        elif response == "ENFJ":
+            return "Protagonist"
+        elif response == "ENFP":
+            return "Campaigner"
+        elif response == "ISTJ":
+            return "Logistician"
+        elif response == "ISFJ":
+            return "Defender"
+        elif response == "ESTJ":
+            return "Executive"
+        elif response == "ESFJ":
+            return "Consul"
+        elif response == "ISTP":
+            return "Virtuoso"
+        elif response == "ISFP":
+            return "Adventurer"
+        elif response == "ESTP":
+            return "Entrepreneur"
+        elif response == "ESFP":
+            return "Entertainer"
 
 
 if __name__ == "__main__":
