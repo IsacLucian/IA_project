@@ -1,9 +1,10 @@
 import pickle
-from nltk.corpus import stopwords
-from sklearn.feature_extraction import DictVectorizer
 import regex as re
-from from_file import get_posts_from_file
+from nltk.corpus import stopwords
 from sklearn.ensemble import VotingClassifier, AdaBoostClassifier, RandomForestClassifier
+from sklearn.feature_extraction import DictVectorizer
+
+from from_file import get_posts_from_file
 
 useless_words = stopwords.words('english')
 
@@ -38,6 +39,11 @@ def obtain_data(features):
     return X_train
 
 
+def modify_data_again(text1):
+    features = get_model(pre_process_input(text1), dict_vocabulary)
+    return features
+
+
 def modify_data(text):
     features = get_model(pre_process_input(text), dict_vocabulary)
     return obtain_data(features)
@@ -45,14 +51,14 @@ def modify_data(text):
 
 def grid_search_for_model(model_name, data):
     personality = ''
-    if model_name=="Logistic Regression":
+    if model_name == "Logistic Regression":
         classifier_f = open("logistic_regression0.pickle", "rb")
         gs_rf = pickle.load(classifier_f)
         personality += gs_rf.predict(data)[0][0]
         classifier_f.close()
         classifier_f = open("logistic_regression1.pickle", "rb")
         gs_rf = pickle.load(classifier_f)
-        if gs_rf.predict(data)[0]=='Intuition':
+        if gs_rf.predict(data)[0] == 'Intuition':
             personality += 'N'
         else:
             personality += gs_rf.predict(data)[0][0]
@@ -66,14 +72,14 @@ def grid_search_for_model(model_name, data):
         personality += gs_rf.predict(data)[0][0]
         classifier_f.close()
         return personality
-    elif model_name=="Random Forest":
+    elif model_name == "Random Forest":
         classifier_f = open("random_forest0.pickle", "rb")
         gs_rf = pickle.load(classifier_f)
         personality += gs_rf.predict(data)[0][0]
         classifier_f.close()
         classifier_f = open("random_forest1.pickle", "rb")
         gs_rf = pickle.load(classifier_f)
-        if gs_rf.predict(data)[0]=='Intuition':
+        if gs_rf.predict(data)[0] == 'Intuition':
             personality += 'N'
         else:
             personality += gs_rf.predict(data)[0][0]
@@ -87,14 +93,14 @@ def grid_search_for_model(model_name, data):
         personality += gs_rf.predict(data)[0][0]
         classifier_f.close()
         return personality
-    elif model_name=="SVM":
+    elif model_name == "SVM":
         classifier_f = open("svm0.pickle", "rb")
         gs_svm = pickle.load(classifier_f)
         personality += gs_svm.predict(data)[0][0]
         classifier_f.close()
         classifier_f = open("svm1.pickle", "rb")
         gs_svm = pickle.load(classifier_f)
-        if gs_svm.predict(data)[0]=='Intuition':
+        if gs_svm.predict(data)[0] == 'Intuition':
             personality += 'N'
         else:
             personality += gs_svm.predict(data)[0][0]
@@ -108,14 +114,14 @@ def grid_search_for_model(model_name, data):
         personality += gs_svm.predict(data)[0][0]
         classifier_f.close()
         return personality
-    elif model_name=="Decision Tree":
+    elif model_name == "Decision Tree":
         classifier_f = open("decision_tree0.pickle", "rb")
         gs_dt = pickle.load(classifier_f)
         personality += gs_dt.predict(data)[0][0]
         classifier_f.close()
         classifier_f = open("decision_tree1.pickle", "rb")
         gs_dt = pickle.load(classifier_f)
-        if gs_dt.predict(data)[0]=='Intuition':
+        if gs_dt.predict(data)[0] == 'Intuition':
             personality += 'N'
         else:
             personality += gs_dt.predict(data)[0][0]
@@ -129,14 +135,14 @@ def grid_search_for_model(model_name, data):
         personality += gs_dt.predict(data)[0][0]
         classifier_f.close()
         return personality
-    elif model_name=="KNN":
+    elif model_name == "KNN":
         classifier_f = open("knn0.pickle", "rb")
         gs_dt = pickle.load(classifier_f)
         personality += gs_dt.predict(data)[0][0]
         classifier_f.close()
         classifier_f = open("knn1.pickle", "rb")
         gs_dt = pickle.load(classifier_f)
-        if gs_dt.predict(data)[0]=='Intuition':
+        if gs_dt.predict(data)[0] == 'Intuition':
             personality += 'N'
         else:
             personality += gs_dt.predict(data)[0][0]
@@ -150,36 +156,35 @@ def grid_search_for_model(model_name, data):
         personality += gs_dt.predict(data)[0][0]
         classifier_f.close()
         return personality
-    elif model_name=="Naive Bayes":
+    elif model_name == "Naive Bayes":
         classifier_f = open("nb0.pickle", "rb")
         gs_dt = pickle.load(classifier_f)
-        personality += gs_dt.classify(data)
-        print(personality)
-        # classifier_f.close()
-        # classifier_f = open("nb1.pickle", "rb")
-        # gs_dt = pickle.load(classifier_f)
-        # if gs_dt.predict(data)[0]=='Intuition':
-        #     personality += 'N'
-        # else:
-        #     personality += gs_dt.predict(data)[0][0]
-        # classifier_f.close()
-        # classifier_f = open("nb2.pickle", "rb")
-        # gs_dt = pickle.load(classifier_f)
-        # personality += gs_dt.predict(data)[0][0]
-        # classifier_f.close()
-        # classifier_f = open("nb3.pickle", "rb")
-        # gs_dt = pickle.load(classifier_f)
-        # personality += gs_dt.predict(data)[0][0]
-        # classifier_f.close()
-        # return personality
-    elif model_name=="Ensemble":
+        personality += gs_dt.classify(data)[0]
+        classifier_f.close()
+        classifier_f = open("nb1.pickle", "rb")
+        gs_dt = pickle.load(classifier_f)
+        if gs_dt.classify(data) == 'Intuition':
+            personality += 'N'
+        else:
+            personality += gs_dt.classify(data)[0]
+        classifier_f.close()
+        classifier_f = open("nb2.pickle", "rb")
+        gs_dt = pickle.load(classifier_f)
+        personality += gs_dt.classify(data)[0]
+        classifier_f.close()
+        classifier_f = open("nb3.pickle", "rb")
+        gs_dt = pickle.load(classifier_f)
+        personality += gs_dt.classify(data)[0]
+        classifier_f.close()
+        return personality
+    elif model_name == "Ensemble":
         classifier_f = open("ensemble0.pickle", "rb")
         gs_dt = pickle.load(classifier_f)
         personality += gs_dt.predict(data)[0][0]
         classifier_f.close()
         classifier_f = open("ensemble1.pickle", "rb")
         gs_dt = pickle.load(classifier_f)
-        if gs_dt.predict(data)[0]=='Intuition':
+        if gs_dt.predict(data)[0] == 'Intuition':
             personality += 'N'
         else:
             personality += gs_dt.predict(data)[0][0]
@@ -195,12 +200,11 @@ def grid_search_for_model(model_name, data):
         return personality
 
 
-
 text = "story working felt upon sense hold older physical huge friendship go house wek"
 # print(grid_search_for_model("Logistic Regression", modify_data(text)))
 # print(grid_search_for_model("Random Forest", modify_data(text)))
 # print(grid_search_for_model("SVM", modify_data(text)))
 # print(grid_search_for_model("Decision Tree", modify_data(text)))
 # print(grid_search_for_model("KNN", modify_data(text)))
-print(grid_search_for_model("Naive Bayes", modify_data(text)))
-print(grid_search_for_model("Ensemble", modify_data(text)))
+print(grid_search_for_model("Naive Bayes", modify_data_again(text)))
+# print(grid_search_for_model("Ensemble", modify_data(text)))
