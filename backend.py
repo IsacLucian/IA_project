@@ -1,4 +1,5 @@
 from load_classifiers import modify_data
+from load_classifiers import modify_data_again
 from load_classifiers import grid_search_for_model
 
 
@@ -23,7 +24,7 @@ def logistic_regression(text):
 
 
 def naive_bayes(text):
-    response = grid_search_for_model("Naive Bayes", modify_data(text))
+    response = grid_search_for_model("Naive Bayes", modify_data_again(text))
     return response
 
 
