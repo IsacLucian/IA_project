@@ -338,9 +338,9 @@ def grid_search_for_model(grid_parameters,model_name,position):
             pickle.dump(est_Ensemble, save_classifier)
             save_classifier.close()
             print("Introversion Extroversion Ensemble Model Train accuracy percent:",
-                  est_Ensemble.score * 100)
+                  est_Ensemble.score(X_train, y_train) * 100)
             print("Introversion Extroversion Ensemble Model Test accuracy percent:",
-                  est_Ensemble.score * 100)
+                  est_Ensemble.score(X_test, y_test) * 100)
         elif position == 1:
             classifier_f = open("knn1.pickle", "rb")
             knn0 = pickle.load(classifier_f)
@@ -354,9 +354,9 @@ def grid_search_for_model(grid_parameters,model_name,position):
             pickle.dump(est_Ensemble, save_classifier)
             save_classifier.close()
             print("Introversion Extroversion Ensemble Model Train accuracy percent:",
-                  est_Ensemble.score * 100)
+                  est_Ensemble.score(X_train, y_train) * 100)
             print("Introversion Extroversion Ensemble Model Test accuracy percent:",
-                  est_Ensemble.score * 100)
+                  est_Ensemble.score(X_test, y_test) * 100)
         elif position == 2:
             classifier_f = open("knn2.pickle", "rb")
             knn0 = pickle.load(classifier_f)
@@ -370,9 +370,9 @@ def grid_search_for_model(grid_parameters,model_name,position):
             pickle.dump(est_Ensemble, save_classifier)
             save_classifier.close()
             print("Introversion Extroversion Ensemble Model Train accuracy percent:",
-                  est_Ensemble.score * 100)
+                  est_Ensemble.score(X_train, y_train) * 100)
             print("Introversion Extroversion Ensemble Model Test accuracy percent:",
-                  est_Ensemble.score * 100)
+                  est_Ensemble.score(X_test, y_test) * 100)
         elif position == 3:
             classifier_f = open("knn3.pickle", "rb")
             knn0 = pickle.load(classifier_f)
@@ -386,9 +386,9 @@ def grid_search_for_model(grid_parameters,model_name,position):
             pickle.dump(est_Ensemble, save_classifier)
             save_classifier.close()
             print("Introversion Extroversion Ensemble Model Train accuracy percent:",
-                  est_Ensemble.score * 100)
+                  est_Ensemble.score(X_train, y_train) * 100)
             print("Introversion Extroversion Ensemble Model Test accuracy percent:",
-                  est_Ensemble.score * 100)
+                  est_Ensemble.score(X_test, y_test) * 100)
 
 
 print("======================================================================")
@@ -443,8 +443,8 @@ knn_grid = {
 # grid_search_for_model(knn_grid, "Naive Bayes", 2)
 # grid_search_for_model(knn_grid, "Naive Bayes", 3)
 
-grid_search_for_model(knn_grid, "Ensemble", 0)
-grid_search_for_model(knn_grid, "Ensemble", 1)
+# grid_search_for_model(knn_grid, "Ensemble", 0)
+# grid_search_for_model(knn_grid, "Ensemble", 1)
 grid_search_for_model(knn_grid, "Ensemble", 2)
 grid_search_for_model(knn_grid, "Ensemble", 3)
 

@@ -150,11 +150,57 @@ def grid_search_for_model(model_name, data):
         personality += gs_dt.predict(data)[0][0]
         classifier_f.close()
         return personality
+    elif model_name=="Naive Bayes":
+        classifier_f = open("nb0.pickle", "rb")
+        gs_dt = pickle.load(classifier_f)
+        personality += gs_dt.classify(data)
+        print(personality)
+        # classifier_f.close()
+        # classifier_f = open("nb1.pickle", "rb")
+        # gs_dt = pickle.load(classifier_f)
+        # if gs_dt.predict(data)[0]=='Intuition':
+        #     personality += 'N'
+        # else:
+        #     personality += gs_dt.predict(data)[0][0]
+        # classifier_f.close()
+        # classifier_f = open("nb2.pickle", "rb")
+        # gs_dt = pickle.load(classifier_f)
+        # personality += gs_dt.predict(data)[0][0]
+        # classifier_f.close()
+        # classifier_f = open("nb3.pickle", "rb")
+        # gs_dt = pickle.load(classifier_f)
+        # personality += gs_dt.predict(data)[0][0]
+        # classifier_f.close()
+        # return personality
+    elif model_name=="Ensemble":
+        classifier_f = open("ensemble0.pickle", "rb")
+        gs_dt = pickle.load(classifier_f)
+        personality += gs_dt.predict(data)[0][0]
+        classifier_f.close()
+        classifier_f = open("ensemble1.pickle", "rb")
+        gs_dt = pickle.load(classifier_f)
+        if gs_dt.predict(data)[0]=='Intuition':
+            personality += 'N'
+        else:
+            personality += gs_dt.predict(data)[0][0]
+        classifier_f.close()
+        classifier_f = open("ensemble2.pickle", "rb")
+        gs_dt = pickle.load(classifier_f)
+        personality += gs_dt.predict(data)[0][0]
+        classifier_f.close()
+        classifier_f = open("ensemble3.pickle", "rb")
+        gs_dt = pickle.load(classifier_f)
+        personality += gs_dt.predict(data)[0][0]
+        classifier_f.close()
+        return personality
 
 
 
 text = "story working felt upon sense hold older physical huge friendship go house wek"
-print(grid_search_for_model("Logistic Regression", modify_data(text)))
-print(grid_search_for_model("Random Forest", modify_data(text)))
-print(grid_search_for_model("SVM", modify_data(text)))
-print(grid_search_for_model("Decision Tree", modify_data(text)))
+# print(grid_search_for_model("Logistic Regression", modify_data(text)))
+# print(grid_search_for_model("Random Forest", modify_data(text)))
+# print(grid_search_for_model("SVM", modify_data(text)))
+# print(grid_search_for_model("Decision Tree", modify_data(text)))
+# print(grid_search_for_model("KNN", modify_data(text)))
+print(grid_search_for_model("Naive Bayes", modify_data(text)))
+print(grid_search_for_model("Ensemble", modify_data(text)))
